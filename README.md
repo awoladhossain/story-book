@@ -142,4 +142,4 @@ This project is licensed under the MIT License.
 
 ## 📞 Contact
 
-For any inquiries or support, please contact [your_email@example.com].
+For any inquiries or support, please contact [awoladh04@gmail.com].
