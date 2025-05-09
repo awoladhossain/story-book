@@ -3,6 +3,8 @@ import crypto from "crypto";
 import User from "../models/user.model.js";
 
 import {
+  sendPasswordResetConfirmationEmail,
+  sendPasswordResetEmail,
   verificationEmailWithToken,
   welcomeEmail,
 } from "../nodemailer/nodemailerEmail.js";
@@ -141,13 +143,74 @@ export const forgotPassword = async (req, res) => {
     // * Generate  reset token
     const resetToken = crypto.randomBytes(20).toString("hex");
     const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 10 minutes
-
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpiresAt = resetTokenExpiresAt;
-
     await user.save();
-    
+    // * Send reset password email
+    await sendPasswordResetEmail(
+      user.email,
+      `${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+    );
+    res.status(200).json({
+      success: true,
+      message: "Password reset email sent successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+export const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+    if (!token || !password) {
+      throw new Error("Please provide a token and password");
+    }
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: Date.now() },
+    });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+    await user.save();
+    await sendPasswordResetConfirmationEmail(user.email);
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    res.status(200).json({
+      success: true,
+      message: "User authenticated successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ success: false, message: error.message });
