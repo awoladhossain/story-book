@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import TravelStory from "../models/travelStory.model.js";
 
 export const addTravelStory = async (req, res) => {
@@ -75,6 +77,52 @@ export const uploadTravelImage = async (req, res) => {
       message: "Image uploaded successfully",
       imageUrl,
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const deleteTravelImage = async (req, res) => {
+  const { imageUrl } = req.query;
+  try {
+    if (!imageUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "No image url provided",
+      });
+    }
+    const fileName = path.basename(imageUrl);
+    const filePath = path.join(path.resolve(), "uploads", fileName);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      return res.status(200).json({
+        success: true,
+        message: "Image deleted successfully",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Image not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const editTravelStory = async (req, res) => {
+  const { id } = req.params;
+  const { title, story, visitedLocation, imageUrl, visitedDate } = req.body;
+  try {
+    
   } catch (error) {
     console.log(error);
     return res.status(500).json({

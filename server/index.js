@@ -15,6 +15,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 // app.use("/uploads",express.static(path.join(__dirname,"./uploads")))
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
+app.use("/assets", express.static(path.join(path.resolve(), "assets")));
 
 // * api endpoints of auth
 app.use("/api/auth", authRouter);
