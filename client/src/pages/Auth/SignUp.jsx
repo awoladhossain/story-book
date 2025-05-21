@@ -1,19 +1,33 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { Eye, EyeOff, Loader, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import PasswordStrength from "../../components/PasswordStrength";
-
+import { authStore } from "../../store/authStore";
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const handleSignUp = (e) => {
+  const navigate = useNavigate();
+
+  const { signup, error, isLoading } = authStore();
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
     // Handle sign-up logic here
+    try {
+      await signup(email, password, name);
+      toast.success("Account Created Successfully!", {
+        position: "bottom-right",
+      });
+      navigate("/verfiy-email");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <motion.div
@@ -51,7 +65,7 @@ const SignUp = () => {
             onChange={(e) => setPassword(e.target.value)}
             onRightIconClick={() => setShowPassword((prev) => !prev)}
           />
-          {/* {error && <p className="text-red-500 font-semibold mt-2">{error}</p>} */}
+          {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
           <PasswordStrength password={password} />
           <motion.button
             className="mt-5 w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white
@@ -61,14 +75,13 @@ const SignUp = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            // disabled={isLoading}
+            disabled={isLoading}
           >
-            {/* {isLoading ? (
+            {isLoading ? (
               <Loader className=" animate-spin mx-auto" size={24} />
             ) : (
               "Sign Up"
-            )} */}
-            Sign Up
+            )}
           </motion.button>
         </form>
         <div className="px-8 py-4 bg-gray-900 mt-5 bg-opacity-50 flex justify-center">

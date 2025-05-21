@@ -3,6 +3,7 @@ import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import Home from "./pages/Home/Home";
 import FloatingShape from "./components/FloatingShape";
+import EmailVerification from "./pages/Auth/EmailVerification";
 const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900 ">
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/dashboard" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/verfiy-email" element={<EmailVerification />} />
         </Routes>
       </BrowserRouter>
     </div>
