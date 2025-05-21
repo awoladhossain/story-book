@@ -14,7 +14,7 @@
 
 ## 🛠️ Technologies Used
 
-- **Frontend**: React.js, React Router, Axios
+- **Frontend**: React.js, React Router, Axios, Zustand
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JSON Web Tokens (JWT)
@@ -27,8 +27,34 @@
 ```
 story-book/
 ├── client/                    # React frontend
-│   ├── public/
-│   └── src/
+│   ├── public/                # Static assets
+│   ├── src/                   # React source files
+│   │   ├── assets/            # Images, fonts, etc.
+│   │   ├── components/        # Reusable React components
+│   │   │   ├── FloatingShape.jsx
+│   │   │   ├── Input.jsx
+│   │   │   └── PasswordStrength.jsx
+│   │   ├── pages/             # Page components
+│   │   │   ├── Auth/          # Authentication-related pages
+│   │   │   │   ├── EmailVerification.jsx
+│   │   │   │   ├── ForgetPassword.jsx
+│   │   │   │   ├── Login.jsx
+│   │   │   │   ├── ResetPassword.jsx
+│   │   │   │   └── SignUp.jsx
+│   │   │   └── Home/          # Home page
+│   │   │       └── Home.jsx
+│   │   ├── store/             # State management with Zustand
+│   │   │   └── authStore.js   # Authentication state management
+│   │   ├── App.css            # Global styles
+│   │   ├── index.css          # Entry styles
+│   │   ├── App.jsx            # Main app component
+│   │   └── main.jsx           # React entry point
+│   ├── .gitignore
+│   ├── index.html             # HTML template
+│   ├── eslint.config.js       # ESLint configuration
+│   ├── vite.config.js         # Vite configuration
+│   ├── package-lock.json
+│   └── package.json
 ├── server/                    # Express backend
 │   ├── controllers/           # Route controllers
 │   ├── middleware/            # Custom middleware
@@ -45,9 +71,9 @@ story-book/
 
 ### Prerequisites
 
-- Node.js and npm installed
-- MongoDB installed and running
-- Cloudinary account (optional, for image uploads)
+- [Node.js](https://nodejs.org/) and npm installed
+- [MongoDB](https://www.mongodb.com/) installed and running
+- [Cloudinary](https://cloudinary.com/) account (optional, for image uploads)
 
 ### Backend Setup
 
@@ -59,8 +85,7 @@ story-book/
    ```bash
    npm install
    ```
-3. Configure environment variables:
-   Create a `.env` file in the `server` directory and add the following:
+3. Create a `.env` file in the `server` directory with the following:
    ```
    PORT=5000
    MONGODB_URI=your_mongodb_connection_string
@@ -110,36 +135,47 @@ story-book/
 
 ## 🛡️ Authentication & Authorization
 
-- **JWT Tokens**: Upon successful login, a JWT token is issued and must be included in the `Authorization` header for protected routes.
-- **Middleware**: The `verifyToken` middleware checks for the presence and validity of the JWT token before granting access to protected routes.
+- **JWT Tokens**: Upon successful login, a JWT token is issued and must be included in the `Authorization` header (`Bearer <token>`) for protected routes.
+- **Zustand State Management**: The `authStore.js` uses Zustand to manage authentication state (e.g., user login status, token) on the frontend.
+- **Middleware**: The `verifyToken` middleware ensures only authenticated users access protected routes.
 
 ## 🖼️ Image Uploads
 
-- **Local Storage**: Images are stored in the `uploads/` directory on the server.
-- **Cloudinary Integration**: Alternatively, images can be uploaded to Cloudinary. Ensure Cloudinary credentials are set in the `.env` file.
+- **Local Storage**: Images are stored in the `server/uploads/` directory by default.
+- **Cloudinary**: Optionally upload images to Cloudinary by configuring credentials in the `.env` file.
 
 ## ⚠️ Error Handling
 
-A global error handler middleware captures and processes errors throughout the application, ensuring consistent error responses and logging.
+A centralized error handler ensures consistent error responses and logging across the application.
 
 ## 📧 Email Services
 
-Utilizes Nodemailer to send verification and password reset emails. Configure your email service credentials in the `.env` file.
+Nodemailer is used for sending verification and password reset emails. Configure email service credentials in the `.env` file.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature-branch`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add new feature'`)
-5. Push to the branch (`git push origin feature-branch`)
-6. Create a Pull Request
+We welcome contributions! To contribute:
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Make and commit changes:
+   ```bash
+   git commit -m "Add your feature description"
+   ```
+4. Push to your branch:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Open a Pull Request on GitHub.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ## 📞 Contact
 
-For any inquiries or support, please contact [awoladh04@gmail.com].
+For inquiries or support, reach out to [awoladh04@gmail.com](mailto:awoladh04@gmail.com) or open an issue on this repository.
+
+Happy storytelling! 🌍
