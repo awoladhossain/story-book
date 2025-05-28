@@ -24,7 +24,7 @@ const SignUp = () => {
       toast.success("Account Created Successfully!", {
         position: "bottom-right",
       });
-      navigate("/verfiy-email");
+      navigate("/verify-email");
     } catch (error) {
       console.log(error);
     }
