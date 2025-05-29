@@ -77,6 +77,7 @@ export const authStore = create(
           });
           return true;
         } catch (error) {
+          console.log(error);
           set({
             error: "Error logging out",
             isLoading: false,

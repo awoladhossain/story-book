@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import Input from "../../components/Input";
 import { motion } from "framer-motion";

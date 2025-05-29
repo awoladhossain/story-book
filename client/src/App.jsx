@@ -16,12 +16,35 @@ import SignUp from "./pages/Auth/SignUp";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Home from "./pages/Home/Home";
 import { authStore } from "./store/authStore";
+import Navbar from "./components/Navbar";
+
+// Layout with conditional Navbar
+const AppLayout = ({ children }) => {
+  const location = useLocation();
+  const hideNavbarOn = [
+    "/login",
+    "/signup",
+    "/verify-email",
+    "/forgot-password",
+  ];
+
+  const isResetRoute = location.pathname.startsWith("/reset-password");
+
+  const shouldHideNavbar =
+    hideNavbarOn.includes(location.pathname) || isResetRoute;
+
+  return (
+    <>
+      {!shouldHideNavbar && <Navbar />}
+      {children}
+    </>
+  );
+};
 
 const RedirectAuthenticatedUser = ({ children }) => {
   const { isAuthenticated, user } = authStore();
   const location = useLocation();
 
-  // Redirect authenticated users from auth routes (except /login) to dashboard
   if (isAuthenticated && user?.isVerified && location.pathname !== "/login") {
     if (
       ["/signup", "/verify-email", "/forgot-password", "/reset-password"].some(
@@ -39,112 +62,115 @@ const ProtectedRoute = ({ children }) => {
   const { user, isAuthenticated, isCheckingAuth } = authStore();
   const location = useLocation();
 
-  console.log("Protected Route Check:", {
-    isAuthenticated,
-    user,
-    isVerified: user?.isVerified,
-    isCheckingAuth,
-  });
-
   if (isCheckingAuth) {
     return <LoadingSpinner />;
   }
 
   if (!isAuthenticated) {
-    console.log("Not authenticated, redirecting to login");
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (user && !user.isVerified) {
-    console.log("User not verified, redirecting to verify-email");
     return <Navigate to="/verify-email" replace />;
   }
 
   return children;
 };
 
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <RedirectAuthenticatedUser>
+            <Login />
+          </RedirectAuthenticatedUser>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <RedirectAuthenticatedUser>
+            <SignUp />
+          </RedirectAuthenticatedUser>
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={
+          <RedirectAuthenticatedUser>
+            <EmailVerification />
+          </RedirectAuthenticatedUser>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <RedirectAuthenticatedUser>
+            <ForgotPassword />
+          </RedirectAuthenticatedUser>
+        }
+      />
+      <Route
+        path="/reset-password/:token"
+        element={
+          <RedirectAuthenticatedUser>
+            <ResetPassword />
+          </RedirectAuthenticatedUser>
+        }
+      />
+    </Routes>
+  );
+};
+
 const App = () => {
   const { isCheckingAuth, checkAuth } = authStore();
 
   useEffect(() => {
-    console.log("App mounted, checking auth");
     checkAuth();
   }, []);
 
   if (isCheckingAuth) {
-    console.log("Checking authentication...");
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-cyan-800 to-teal-700">
       <FloatingShape
-        color="bg-green-500"
+        color="bg-cyan-400"
         size="w-64 h-64"
         top="-5%"
         left="10%"
         delay={0}
       />
       <FloatingShape
-        color="bg-lime-500"
+        color="bg-cyan-400"
         size="w-32 h-32"
         top="40%"
         left="-10%"
         delay={2}
       />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/login"
-            element={
-              <RedirectAuthenticatedUser>
-                <Login />
-              </RedirectAuthenticatedUser>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <RedirectAuthenticatedUser>
-                <SignUp />
-              </RedirectAuthenticatedUser>
-            }
-          />
-          <Route
-            path="/verify-email"
-            element={
-              <RedirectAuthenticatedUser>
-                <EmailVerification />
-              </RedirectAuthenticatedUser>
-            }
-          />
-          <Route
-            path="/forgot-password"
-            element={
-              <RedirectAuthenticatedUser>
-                <ForgotPassword />
-              </RedirectAuthenticatedUser>
-            }
-          />
-          <Route
-            path="/reset-password/:token"
-            element={
-              <RedirectAuthenticatedUser>
-                <ResetPassword />
-              </RedirectAuthenticatedUser>
-            }
-          />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </div>
   );
