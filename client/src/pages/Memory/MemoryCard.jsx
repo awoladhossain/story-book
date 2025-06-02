@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import moment from "moment";
 import { BsFillPinMapFill } from "react-icons/bs";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 const MemoryCard = ({
   imageUrl,
@@ -14,7 +15,7 @@ const MemoryCard = ({
   onFavouriteStory,
 }) => {
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
+    <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
       <img
         src={imageUrl}
         alt={title}
@@ -26,11 +27,11 @@ const MemoryCard = ({
         className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 rounded-full absolute top-4 right-4 transition-all duration-200"
         title="Add to Favourites"
       >
-        <FaRegHeart
-          className={`text-[22px] transition-colors duration-200 ${
-            isFavourite ? "text-red-500" : "text-white"
-          }`}
-        />
+        {isFavourite ? (
+          <FaHeart className="text-[22px] text-red-500" />
+        ) : (
+          <FaRegHeart className="text-[22px] text-white" />
+        )}
       </button>
       <div className="p-4 space-y-2" onClick={onClickStory}>
         <div className="flex items-center gap-3">

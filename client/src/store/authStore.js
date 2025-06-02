@@ -45,7 +45,7 @@ export const authStore = create(
             { email, password },
             { withCredentials: true }
           );
-          console.log("Login response:", response.data);
+          // console.log("Login response:", response.data);
           set({
             isAuthenticated: true,
             user: response.data.user,
@@ -110,11 +110,11 @@ export const authStore = create(
       checkAuth: async () => {
         set({ isCheckingAuth: true, error: null });
         try {
-          console.log("Checking authentication status...");
+          // console.log("Checking authentication status...");
           const response = await axios.get(`${API_URL}/check-auth`, {
             withCredentials: true,
           });
-          console.log("Auth check response:", response.data);
+          // console.log("Auth check response:", response.data);
           set({
             user: response.data.user,
             isAuthenticated: true,

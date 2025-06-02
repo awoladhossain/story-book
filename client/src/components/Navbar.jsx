@@ -10,7 +10,7 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  console.log("navbar user", user);
+  // console.log("navbar user", user);
   return (
     <div className=" bg-white/10 backdrop-blur-3xl border-b border-white/20 flex items-center justify-between px-6 py-2 drop-shadow sticky top-0 z-10 shadow-md rounded-md">
       <Link to="/">
