@@ -3,8 +3,20 @@ import { useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { MdAddCircleOutline, MdUpdate } from "react-icons/md";
 import DateSelection from "./DateSelection";
+import ImageSelect from "./ImageSelect";
+import TagInput from "./TagInput";
+
+
 const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
   const [visitedDate, setVisitedDate] = useState(null);
+
+  const [title, setTitle] = useState(null);
+  const [storyImage, setStoryImage] = useState(null);
+  const [story, setStory] = useState("");
+  const [visitedLocation, setVisitedDateLocation] = useState([]);
+
+  console.log("coming form ", title);
+
   const handleAddOrUpdateClick = () => {
     if (type === "add") {
       console.log("Adding story:", storyInfo);
@@ -14,6 +26,8 @@ const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
       // TODO: Call API or handle update logic here
     }
   };
+
+  const handleDeleteStoryImage = async () => {};
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -57,9 +71,31 @@ const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
           <input
             className="text-2xl text-slate-800 outline-none"
             placeholder="A Day in the Sea Beatch"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <div className="my-3">
             <DateSelection date={visitedDate} setDate={setVisitedDate} />
+          </div>
+          <ImageSelect
+            image={storyImage}
+            setImage={setStoryImage}
+            handleDeleteImage={handleDeleteStoryImage}
+          />
+          <div className="flex flex-col gap-2 mt-4">
+            <label className="">STORY</label>
+            <textarea
+              type="text"
+              className="text-sm text-slate-900 outline-none bg-slate-50 p-2 rounded"
+              placeholder="Your Story"
+              rows={10}
+              value={story}
+              onChange={(e) => setStory(e.target.value)}
+            />
+          </div>
+          <div className="pt-3">
+            <label className="text-xs text-slate-500">VISITED LOCATION</label>
+            <TagInput tag={visitedLocation} setTag={setVisitedDateLocation} />
           </div>
         </div>
       </div>
