@@ -17,7 +17,12 @@ const router = express.Router();
 // *Add travel stroy
 router.post("/add-travel-story", verifyToken, addTravelStory);
 router.get("/get-all-stories", verifyToken, getAllTravelStories);
-router.post("/image-upload", upload.single("image"), uploadTravelImage);
+router.post(
+  "/image-upload",
+  verifyToken,
+  upload.single("image"),
+  uploadTravelImage
+);
 router.delete("/delete-image", verifyToken, deleteTravelImage);
 router.put("/edit-story/:id", verifyToken, editTravelStory);
 router.delete("/delete-story/:id", verifyToken, deleteOneTravelStory);
