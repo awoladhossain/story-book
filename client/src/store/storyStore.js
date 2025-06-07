@@ -81,4 +81,64 @@ export const storyStore = create((set) => ({
       });
     }
   },
+  uploadImage: async (imageFile) => {
+    set({ isLoading: true, error: null });
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      const response = await axios.post(`${API_URL}/image-upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+      console.log("Image uploaded successfully:", response.data);
+      set({
+        isLoading: false,
+        message: response.data?.message,
+        error: false,
+        imageUrl: response.data?.imageUrl,
+      });
+      return response.data;
+    } catch (error) {
+      console.log("Error uploading image:", error);
+      set({
+        error: true,
+        isLoading: false,
+        message: error.response?.data?.message || "Failed to upload image",
+      });
+    }
+  },
+  addStory: async (title, visitedDate, imageUrl, story, visitedLocation) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(
+        `${API_URL}/add-travel-story`,
+        {
+          title,
+          visitedDate,
+          imageUrl,
+          story,
+          visitedLocation,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Story added successfully:", response.data);
+      set((state) => ({
+        story: [...state.story, response.data.travelStory],
+        isLoading: false,
+        message: response.data.message,
+        error: false,
+      }));
+    } catch (error) {
+      console.log("Error adding story:", error);
+      set({
+        error: true,
+        isLoading: false,
+        message: error.response?.data?.message || "Failed to add story",
+      });
+    }
+  },
 }));

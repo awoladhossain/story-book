@@ -1,29 +1,65 @@
 /* eslint-disable no-unused-vars */
+import moment from "moment";
 import { useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { MdAddCircleOutline, MdUpdate } from "react-icons/md";
+import { storyStore } from "../../store/storyStore";
 import DateSelection from "./DateSelection";
 import ImageSelect from "./ImageSelect";
 import TagInput from "./TagInput";
 
-
 const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
   const [visitedDate, setVisitedDate] = useState(null);
-
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState("");
   const [storyImage, setStoryImage] = useState(null);
   const [story, setStory] = useState("");
   const [visitedLocation, setVisitedDateLocation] = useState([]);
 
-  console.log("coming form ", title);
+  const { addStory, isLoading, error, uploadImage } = storyStore();
+  const updateStory = () => {};
 
-  const handleAddOrUpdateClick = () => {
+  const handleAddOrUpdateClick = async () => {
+    console.log("storyInfo", {
+      title,
+      visitedDate,
+      storyImage,
+      story,
+      visitedLocation,
+    });
+
+    if (
+      !title ||
+      !visitedDate ||
+      !storyImage ||
+      !story ||
+      visitedLocation.length === 0
+    ) {
+      console.error("All fields are required.");
+      return;
+    }
+
     if (type === "add") {
-      console.log("Adding story:", storyInfo);
-      // TODO: Call API or handle add logic here
-    } else if (type === "edit") {
-      console.log("Updating story:", storyInfo);
-      // TODO: Call API or handle update logic here
+      let imageUrl = null;
+      if (storyImage) {
+        const imageUploadResult = await uploadImage(storyImage);
+        imageUrl = imageUploadResult?.imageUrl || null;
+      }
+
+      const visitedDateTimestamp = visitedDate
+        ? moment(visitedDate).valueOf()
+        : moment().valueOf();
+
+      // Wait for the story to be added to the store
+      await addStory(
+        title,
+        visitedDateTimestamp,
+        imageUrl,
+        story,
+        visitedLocation
+      );
+      onClose();
+    } else {
+      updateStory();
     }
   };
 
