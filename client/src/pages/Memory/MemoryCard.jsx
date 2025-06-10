@@ -10,7 +10,6 @@ const MemoryCard = ({
   isFavourite,
   visitedLocation,
   visitedDate,
-  onEdit,
   onClickStory,
   onFavouriteStory,
 }) => {

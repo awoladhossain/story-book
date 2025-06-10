@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { storyStore } from "../../store/storyStore";
 import AddMemory from "../Memory/AddMemory";
 import MemoryCard from "../Memory/MemoryCard";
+import ViewStory from "../Memory/ViewStory";
 
 // Set app root for Modal accessibility
 Modal.setAppElement("#root");
@@ -18,9 +19,14 @@ const Dashboard = () => {
     data: null,
   });
 
+  const [openViewModal, setOpenViewModal] = useState({
+    isShown: false,
+    data: null,
+  });
+
   useEffect(() => {
     getStory();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isCheckingAuth) return <p>Loading...</p>;
@@ -36,6 +42,7 @@ const Dashboard = () => {
   };
   const handleViewStory = (data) => {
     console.log("Viewing story:", data);
+    setOpenViewModal({ isShown: true, data });
   };
 
   const handleIsFavourite = (data) => {
@@ -65,7 +72,6 @@ const Dashboard = () => {
                     isFavourite={item.isFavourite}
                     visitedLocation={item.visitedLocation}
                     visitedDate={item.visitedDate}
-                    onEdit={() => handleEdit(item)}
                     onClickStory={() => handleViewStory(item)}
                     onFavouriteStory={() => handleIsFavourite(item)}
                   />
@@ -105,6 +111,37 @@ const Dashboard = () => {
             setOpenEditModal({ isShown: false, type: "add", data: null })
           }
           getAllTravelStories={getStory} // ❗ make sure this is a function
+        />
+      </Modal>
+      {/* View Travel Story Modal */}
+      <Modal
+        isOpen={openViewModal.isShown}
+        onRequestClose={() =>
+          setOpenEditModal({ isShown: false, type: "add", data: null })
+        }
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 999,
+          },
+          content: {
+            maxWidth: "600px",
+            margin: "auto",
+            borderRadius: "1rem",
+            padding: "2rem",
+          },
+        }}
+      >
+        <ViewStory
+          onClose={() => {
+            setOpenViewModal((pre) => ({ ...pre, isShown: false }));
+          }}
+          onEditClick={() => {
+            setOpenViewModal((pre) => ({ ...pre, isShown: false }));
+            handleEdit(openViewModal.data || null);
+          }}
+          onDeleteClick={() => {}}
+          storyInfo={openViewModal.data || null}
         />
       </Modal>
 
