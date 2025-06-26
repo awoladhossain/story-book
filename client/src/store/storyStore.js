@@ -112,7 +112,7 @@ export const storyStore = create((set) => ({
   addStory: async (title, visitedDate, imageUrl, story, visitedLocation) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(
+      const response = await axios.put(
         `${API_URL}/add-travel-story`,
         {
           title,
@@ -141,4 +141,38 @@ export const storyStore = create((set) => ({
       });
     }
   },
+  updateStory: async(title, visitedDate, imageUrl, story, visitedLocation,storyId)=>{
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.put(
+        `${API_URL}/edit-story/${storyId}`,
+        {
+          title,
+          visitedDate,
+          imageUrl,
+          story,
+          visitedLocation,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Story added successfully:", response.data);
+      set((state) => ({
+        story: state.story.map((item) =>
+          item._id === storyId ? response.data.travelStory : item
+        ),
+        isLoading: false,
+        message: response.data.message,
+        error: false,
+      }));
+    } catch (error) {
+      console.log("Error adding story:", error);
+      set({
+        error: true,
+        isLoading: false,
+        message: error.response?.data?.message || "Failed to add story",
+      });
+    }
+  }
 }));

@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getStory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log("Story array:", story);
   }, []);
 
   if (isCheckingAuth) return <p>Loading...</p>;
@@ -42,6 +42,8 @@ const Dashboard = () => {
   };
   const handleViewStory = (data) => {
     console.log("Viewing story:", data);
+    console.log("Viewing story id:", data._id);
+
     setOpenViewModal({ isShown: true, data });
   };
 
@@ -117,7 +119,7 @@ const Dashboard = () => {
       <Modal
         isOpen={openViewModal.isShown}
         onRequestClose={() =>
-          setOpenEditModal({ isShown: false, type: "add", data: null })
+          setOpenEditModal({ isShown: false, data: null })
         }
         style={{
           overlay: {

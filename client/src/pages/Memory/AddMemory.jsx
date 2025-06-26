@@ -9,14 +9,17 @@ import ImageSelect from "./ImageSelect";
 import TagInput from "./TagInput";
 
 const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
-  const [visitedDate, setVisitedDate] = useState(null);
-  const [title, setTitle] = useState("");
-  const [storyImage, setStoryImage] = useState(null);
-  const [story, setStory] = useState("");
-  const [visitedLocation, setVisitedDateLocation] = useState([]);
+  const [title, setTitle] = useState(storyInfo?.title || "");
+  const [storyImage, setStoryImage] = useState(storyInfo?.imageUrl || null);
+  const [story, setStory] = useState(storyInfo?.story || "");
+  const [visitedLocation, setVisitedDateLocation] = useState(
+    storyInfo?.visitedLocation || []
+  );
+  const [visitedDate, setVisitedDate] = useState(
+    storyInfo?.visitedDate || null
+  );
 
-  const { addStory, isLoading, error, uploadImage } = storyStore();
-  const updateStory = () => {};
+  const { addStory, isLoading, error, uploadImage, updateStory } = storyStore();
 
   const handleAddOrUpdateClick = async () => {
     console.log("storyInfo", {
@@ -37,18 +40,21 @@ const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
       console.error("All fields are required.");
       return;
     }
+    let storyId = storyInfo._id;
+    console.log("this is addmemory part: ", storyId);
+    let imageUrl = null;
+    if (typeof storyImage === "object") {
+      const imageUploadResult = await uploadImage(storyImage);
+      imageUrl = imageUploadResult?.imageUrl || null;
+    } else {
+      imageUrl = storyImage;
+    }
+
+    const visitedDateTimestamp = visitedDate
+      ? moment(visitedDate).valueOf()
+      : moment().valueOf();
 
     if (type === "add") {
-      let imageUrl = null;
-      if (storyImage) {
-        const imageUploadResult = await uploadImage(storyImage);
-        imageUrl = imageUploadResult?.imageUrl || null;
-      }
-
-      const visitedDateTimestamp = visitedDate
-        ? moment(visitedDate).valueOf()
-        : moment().valueOf();
-
       // Wait for the story to be added to the store
       await addStory(
         title,
@@ -59,7 +65,15 @@ const AddMemory = ({ storyInfo, type, onClose, getAllTravelStories }) => {
       );
       onClose();
     } else {
-      updateStory();
+      await updateStory(
+        title,
+        visitedDateTimestamp,
+        imageUrl,
+        story,
+        visitedLocation,
+        storyId
+      );
+      onClose();
     }
   };
 
